@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "decision-trail"
+version = "0.1.0"
+description = "Show your thinking, not just your code. Capture human decisions during AI-assisted development."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [{ name = "Elliot Little" }]
+keywords = ["ai", "decisions", "adr", "architecture", "vibe-coding", "claude"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Documentation",
+]
+dependencies = [
+    "click>=8.0",
+    "rich>=13.0",
+]
+
+[project.scripts]
+decision-trail = "decision_trail.cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/elliotlittle/decision-trail"
+Repository = "https://github.com/elliotlittle/decision-trail"
+Issues = "https://github.com/elliotlittle/decision-trail/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
