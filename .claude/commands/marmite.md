@@ -11,13 +11,16 @@ Format:
 ```markdown
 # YYYY-MM-DD — [what the session was about in 2-5 words]
 
-- [one line per moment. quote their words where possible. keep it tight.]
-- [no categories, no headers, no explanations unless essential]
-- [if something got killed, say what and why in one line]
-- [if they reframed something, show the reframe, not the backstory]
+[1-2 sentence summary of what was attempted and the outcome.]
+
+- [tight narrative bullets. what happened, what was decided, why.]
+- [capture trade-offs, killed directions, and quality bars.]
+- [quote the user sparingly — only when their exact words carry meaning a paraphrase would lose.]
+- [no architecture details, env vars, column names, or implementation specifics.]
+- [if nothing notable happened, just write "Nothing notable."]
 ```
 
-That's it. A flat list. Skimmable in 10 seconds. No metadata block, no raw numbers, no "what happened" section.
+Think teammate's standup note, not forensic log. Someone should be able to skim it in 15 seconds and know what mattered. Focus on the *why* behind decisions — code review already captures the *what*.
 
 After writing, commit:
 ```bash
@@ -27,8 +30,9 @@ git commit -m "digest: [2-3 word summary]"
 
 ## Rules
 
-- Quote actual words. Their language is the data.
-- One line per moment. If it needs two lines, you're over-explaining.
+- Narrative over bullet-quotes. Tell the story tight.
+- One bullet per decision or moment. If it needs two, you're over-explaining.
+- No internal details (API keys, model names, table columns, file paths). Keep it safe for a public repo.
 - If nothing notable happened, write "Nothing notable." and commit that. Honest > padded.
 - Never editorialize. Never score. Never count.
 
