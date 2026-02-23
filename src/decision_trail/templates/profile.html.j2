@@ -78,15 +78,17 @@
       </div>
     </section>
 
-    <section>
+    <section class="moments">
       <h2>Beyond Fluency</h2>
-      <div class="narrative">
-        {% if profile.beyond_fluency_evidence %}
-        <p>{{ profile.beyond_fluency_evidence }}</p>
-        {% else %}
-        <p class="placeholder">Surfaces after synthesis — trust calibration, artifact paradox resistance, meta-cognition, strategic killing.</p>
-        {% endif %}
-      </div>
+      {% if profile.beyond_fluency_signals %}
+      <ul>
+        {% for signal in profile.beyond_fluency_signals %}
+        <li>{{ signal }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="placeholder">Surfaces after synthesis — trust calibration, artifact paradox resistance, meta-cognition, strategic killing.</p>
+      {% endif %}
     </section>
 
     <footer>

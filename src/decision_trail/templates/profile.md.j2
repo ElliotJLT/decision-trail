@@ -31,9 +31,10 @@
 
 ## Beyond Fluency
 
-{% if profile.beyond_fluency_evidence %}
-{{ profile.beyond_fluency_evidence }}
-{% else %}
+{% for signal in profile.beyond_fluency_signals %}
+- {{ signal }}
+{% endfor %}
+{% if not profile.beyond_fluency_signals %}
 *Surfaces after synthesis — trust calibration, artifact paradox resistance, meta-cognition, strategic killing.*
 {% endif %}
 

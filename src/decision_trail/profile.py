@@ -40,7 +40,7 @@ class ProfileData:
     how_i_work: str
     highlighted_moments: list[str]
     evolution_narrative: str
-    beyond_fluency_evidence: str
+    beyond_fluency_signals: list[str] = field(default_factory=list)
     digests: list[DigestData] = field(default_factory=list)
     synthesis: list[SynthesisData] = field(default_factory=list)
 
@@ -114,12 +114,22 @@ def parse_synthesis(path: Path) -> SynthesisData:
         if m:
             session_count = int(m.group(1))
 
-    # Parse sections
+    # Parse sections — accept both old and /trail skill header names
+    SECTION_ALIASES: dict[str, str] = {
+        "recurring patterns": "recurring_patterns",
+        "fluency baseline": "recurring_patterns",
+        "evolution": "evolution",
+        "trajectory": "evolution",
+        "beyond fluency": "beyond_fluency",
+        "beyond the index": "beyond_fluency",
+        "gaps": "gaps",
+    }
+
     current_section = None
     sections: dict[str, list[str]] = {
-        "recurring patterns": [],
+        "recurring_patterns": [],
         "evolution": [],
-        "beyond fluency": [],
+        "beyond_fluency": [],
         "gaps": [],
     }
 
@@ -129,8 +139,9 @@ def parse_synthesis(path: Path) -> SynthesisData:
         # Detect section headers
         if stripped.startswith("## "):
             header = stripped[3:].strip().lower()
-            if header in sections:
-                current_section = header
+            canonical = SECTION_ALIASES.get(header)
+            if canonical:
+                current_section = canonical
             continue
 
         if current_section and stripped.startswith("- "):
@@ -139,9 +150,9 @@ def parse_synthesis(path: Path) -> SynthesisData:
     return SynthesisData(
         month=month,
         session_count=session_count,
-        recurring_patterns=sections["recurring patterns"],
+        recurring_patterns=sections["recurring_patterns"],
         evolution=sections["evolution"],
-        beyond_fluency=sections["beyond fluency"],
+        beyond_fluency=sections["beyond_fluency"],
         gaps=sections["gaps"],
     )
 
@@ -198,14 +209,12 @@ def _build_evolution(synthesis_list: list[SynthesisData]) -> str:
     return ""
 
 
-def _build_beyond_fluency(synthesis_list: list[SynthesisData]) -> str:
-    """Build beyond-fluency evidence from synthesis."""
+def _build_beyond_fluency(synthesis_list: list[SynthesisData]) -> list[str]:
+    """Build beyond-fluency evidence from synthesis as individual signals."""
     if not synthesis_list:
-        return ""
+        return []
     latest = synthesis_list[-1]
-    if latest.beyond_fluency:
-        return " ".join(latest.beyond_fluency)
-    return ""
+    return latest.beyond_fluency
 
 
 def build_profile(root: Path) -> ProfileData:
@@ -242,7 +251,7 @@ def build_profile(root: Path) -> ProfileData:
         how_i_work=_build_how_i_work(synthesis_list, digests),
         highlighted_moments=_select_highlighted_moments(digests),
         evolution_narrative=_build_evolution(synthesis_list),
-        beyond_fluency_evidence=_build_beyond_fluency(synthesis_list),
+        beyond_fluency_signals=_build_beyond_fluency(synthesis_list),
         digests=digests,
         synthesis=synthesis_list,
     )
