@@ -42,6 +42,15 @@ git commit -m "digest: [2-3 word summary]"
 git push
 ```
 
+## What NOT to track
+
+- Basic product usage (topping up credits, configuring settings, installing dependencies)
+- Operational hiccups that anyone would handle the same way
+- Routine debugging or error-fixing unless the *approach* was notable
+- Anything that's just "using the tool correctly" — only log thinking patterns
+
+The bar: would a senior engineer reading this learn something about how this person thinks? If not, cut it.
+
 ## Rules
 
 - This is about the human's patterns, not the codebase.
