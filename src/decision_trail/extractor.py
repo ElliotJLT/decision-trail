@@ -30,10 +30,12 @@ class DecisionCandidate:
 
 # Patterns that indicate the user is redirecting the AI
 REDIRECT_SIGNALS = [
-    "no,", "no.", "actually", "instead", "don't", "not that", "wrong",
+    "no,", "no.", "nah", "actually", "instead", "don't", "not that", "wrong",
     "i'd rather", "i prefer", "let's go with", "change that to",
-    "that's not", "i disagree", "override", "ignore that",
-    "scratch that", "wait,", "hold on", "stop",
+    "that's not", "i disagree", "disagree", "override", "ignore that",
+    "scratch that", "wait,", "hold on", "stop", "leave as is",
+    "bit weird", "not clear", "not quite", "weak", "superweak",
+    "too fluffy", "that's fluffy", "kill that", "dead",
 ]
 
 # Patterns that indicate the AI is presenting options
@@ -42,68 +44,143 @@ CHOICE_SIGNALS = [
     "we could either", "two approaches", "alternatives:",
     "which would you prefer", "should i", "do you want",
     "there are a few ways", "a few options",
+    "here are", "pick one", "pick 1",
 ]
+
+
+@dataclass
+class Turn:
+    """A grouped conversation turn — one human or one assistant (possibly multi-line)."""
+    role: str  # "human" | "assistant"
+    content: str  # merged text from all entries in this turn
+    raw_entries: list  # original JSONL entries
+    files_changed: set  # files written/edited during this turn
 
 
 def extract_from_session(session_path: Path) -> List[DecisionCandidate]:
     """Parse a Claude Code JSONL session and identify decision moments."""
-    messages = _load_session(session_path)
-    if not messages:
+    turns = _load_session_grouped(session_path)
+    if not turns:
         return []
 
     candidates = []
 
-    for i, msg in enumerate(messages):
-        # Check for user redirections
-        if msg["role"] == "human" and i > 0:
-            prev = messages[i - 1] if i > 0 else None
-            if prev and prev["role"] == "assistant":
-                redirect = _check_redirect(msg["content"], prev["content"])
-                if redirect:
-                    candidates.append(DecisionCandidate(
-                        summary=_summarize(msg["content"], 80),
-                        context=_summarize(prev["content"], 200),
-                        ai_suggestion=_summarize(prev["content"], 200),
-                        human_response=_summarize(msg["content"], 200),
-                        category="redirect",
-                        turn_index=i,
-                    ))
+    for i, turn in enumerate(turns):
+        if turn.role != "human" or i == 0:
+            continue
 
-        # Check for AI presenting choices that the user then selected
-        if msg["role"] == "assistant":
-            next_msg = messages[i + 1] if i + 1 < len(messages) else None
-            if next_msg and next_msg["role"] == "human":
-                choice = _check_choice(msg["content"], next_msg["content"])
-                if choice:
-                    candidates.append(DecisionCandidate(
-                        summary=f"Chose: {_summarize(next_msg['content'], 60)}",
-                        context=_summarize(msg["content"], 200),
-                        ai_suggestion=_summarize(msg["content"], 200),
-                        human_response=_summarize(next_msg["content"], 200),
-                        category="choice",
-                        turn_index=i,
-                    ))
+        # Find the preceding assistant turn
+        prev_assistant = None
+        for j in range(i - 1, -1, -1):
+            if turns[j].role == "assistant":
+                prev_assistant = turns[j]
+                break
 
-        # Check for significant file operations
-        if msg["role"] == "assistant":
-            changes = _check_significant_changes(msg)
-            if changes:
-                human_context = messages[i - 1]["content"] if i > 0 else ""
-                candidates.append(DecisionCandidate(
-                    summary=f"Significant changes: {changes}",
-                    context=_summarize(human_context, 200) if human_context else "",
-                    ai_suggestion=_summarize(msg["content"], 200),
-                    human_response="",
-                    category="significant_change",
-                    turn_index=i,
-                ))
+        if not prev_assistant:
+            continue
+
+        human_text = turn.content
+
+        # Skip empty or system messages
+        if not human_text.strip() or human_text.startswith("[Request interrupted"):
+            continue
+
+        # Check for redirections
+        if _check_redirect(human_text, prev_assistant.content):
+            candidates.append(DecisionCandidate(
+                summary=_summarize(human_text, 80),
+                context=_summarize(prev_assistant.content, 200),
+                ai_suggestion=_summarize(prev_assistant.content, 200),
+                human_response=_summarize(human_text, 200),
+                category="redirect",
+                turn_index=i,
+            ))
+
+        # Check for choices (AI presented options, human picked)
+        elif _check_choice(prev_assistant.content, human_text):
+            candidates.append(DecisionCandidate(
+                summary=f"Chose: {_summarize(human_text, 60)}",
+                context=_summarize(prev_assistant.content, 200),
+                ai_suggestion=_summarize(prev_assistant.content, 200),
+                human_response=_summarize(human_text, 200),
+                category="choice",
+                turn_index=i,
+            ))
+
+        # Check for significant file changes in the assistant turn
+        if prev_assistant.files_changed and len(prev_assistant.files_changed) >= 3:
+            files_str = ", ".join(sorted(prev_assistant.files_changed)[:5])
+            candidates.append(DecisionCandidate(
+                summary=f"Significant changes: {files_str}",
+                context=_summarize(human_text, 200),
+                ai_suggestion=_summarize(prev_assistant.content, 200),
+                human_response="",
+                category="significant_change",
+                turn_index=i,
+            ))
 
     return candidates
 
 
-def _load_session(session_path: Path) -> List[dict]:
-    """Load and normalize messages from a JSONL session file."""
-    messages = []
+def _load_session_grouped(session_path: Path) -> List[Turn]:
+    """Load JSONL session and group consecutive same-role entries into turns.
+
+    Claude Code writes multiple JSONL lines per assistant turn (thinking, text,
+    tool_use as separate entries). This groups them so we get clean human→assistant
+    turn pairs.
+    """
+    raw_entries = _load_raw_entries(session_path)
+    if not raw_entries:
+        return []
+
+    turns: List[Turn] = []
+    current_role = None
+    current_texts: list[str] = []
+    current_raw: list = []
+    current_files: set = set()
+
+    for entry in raw_entries:
+        role = entry.get("_role")
+        text = entry.get("_text", "")
+        files = entry.get("_files", set())
+
+        if role != current_role and current_role is not None:
+            # Flush current turn
+            merged = " ".join(t for t in current_texts if t.strip())
+            if merged.strip():
+                turns.append(Turn(
+                    role=current_role,
+                    content=merged,
+                    raw_entries=current_raw,
+                    files_changed=current_files,
+                ))
+            current_texts = []
+            current_raw = []
+            current_files = set()
+
+        current_role = role
+        if text.strip():
+            current_texts.append(text)
+        current_raw.append(entry)
+        current_files.update(files)
+
+    # Flush final turn
+    if current_role and current_texts:
+        merged = " ".join(t for t in current_texts if t.strip())
+        if merged.strip():
+            turns.append(Turn(
+                role=current_role,
+                content=merged,
+                raw_entries=current_raw,
+                files_changed=current_files,
+            ))
+
+    return turns
+
+
+def _load_raw_entries(session_path: Path) -> List[dict]:
+    """Load JSONL entries and normalize them with _role, _text, _files fields."""
+    entries = []
     with open(session_path) as f:
         for line in f:
             line = line.strip()
@@ -114,36 +191,41 @@ def _load_session(session_path: Path) -> List[dict]:
             except json.JSONDecodeError:
                 continue
 
-            # Normalize different session formats
+            if not isinstance(entry, dict):
+                continue
+
+            entry_type = entry.get("type", "")
+            msg = entry.get("message", {})
+
+            if not isinstance(msg, dict):
+                continue
+
             role = None
-            content = ""
+            text = ""
+            files: set = set()
 
-            if isinstance(entry, dict):
-                # Claude Code session format: {message: {role, content}, type: "user"|...}
-                msg = entry.get("message", {})
-                if isinstance(msg, dict) and "role" in msg:
-                    msg_role = msg["role"]
-                    if msg_role == "user":
-                        role = "human"
-                        content = _extract_text(msg)
-                    elif msg_role == "assistant":
-                        role = "assistant"
-                        content = _extract_text(msg)
-                elif "type" in entry:
-                    if entry["type"] in ("human", "user"):
-                        role = "human"
-                        content = _extract_text(entry.get("message", entry))
-                    elif entry["type"] == "assistant":
-                        role = "assistant"
-                        content = _extract_text(entry.get("message", entry))
-                elif "role" in entry:
-                    role = entry["role"]
-                    content = _extract_text(entry)
+            if entry_type == "user":
+                role = "human"
+                text = _extract_text(msg)
+            elif entry_type == "assistant":
+                role = "assistant"
+                text = _extract_text(msg)
+                files = _extract_files(msg)
 
-            if role and content:
-                messages.append({"role": role, "content": content, "raw": entry})
+            if role:
+                entry["_role"] = role
+                entry["_text"] = text
+                entry["_files"] = files
+                entries.append(entry)
 
-    return messages
+    return entries
+
+
+# Keep this alias for the digest module
+def _load_session(session_path: Path) -> List[dict]:
+    """Load session as flat list of messages (for backward compat)."""
+    turns = _load_session_grouped(session_path)
+    return [{"role": t.role, "content": t.content, "raw": {}} for t in turns]
 
 
 def _extract_text(msg: dict) -> str:
@@ -159,16 +241,27 @@ def _extract_text(msg: dict) -> str:
             elif isinstance(block, dict):
                 if block.get("type") == "text":
                     parts.append(block.get("text", ""))
-                elif block.get("type") == "tool_use":
-                    name = block.get("name", "")
-                    inp = block.get("input", {})
-                    if name in ("Write", "Edit"):
-                        path = inp.get("file_path", "")
-                        parts.append(f"[{name}: {path}]")
-                    else:
-                        parts.append(f"[{name}]")
+                # Skip thinking blocks — they're internal
         return " ".join(parts)
     return str(content)
+
+
+def _extract_files(msg: dict) -> set:
+    """Extract file paths from tool_use blocks in a message."""
+    content = msg.get("content", "")
+    if not isinstance(content, list):
+        return set()
+
+    files = set()
+    for block in content:
+        if isinstance(block, dict) and block.get("type") == "tool_use":
+            name = block.get("name", "")
+            inp = block.get("input", {})
+            if isinstance(inp, dict) and name in ("Write", "Edit", "NotebookEdit"):
+                path = inp.get("file_path", "")
+                if path:
+                    files.add(Path(path).name)
+    return files
 
 
 def _check_redirect(human_text: str, ai_text: str) -> bool:
@@ -181,29 +274,6 @@ def _check_choice(ai_text: str, human_text: str) -> bool:
     """Check if the AI presented options and the human made a choice."""
     lower = ai_text.lower()
     return any(signal in lower for signal in CHOICE_SIGNALS)
-
-
-def _check_significant_changes(msg: dict) -> Optional[str]:
-    """Check if the message contains significant file changes."""
-    raw = msg.get("raw", {})
-    content = raw.get("content", raw.get("message", {}).get("content", ""))
-
-    if not isinstance(content, list):
-        return None
-
-    files_changed = set()
-    for block in content:
-        if isinstance(block, dict) and block.get("type") == "tool_use":
-            name = block.get("name", "")
-            inp = block.get("input", {})
-            if name in ("Write", "Edit"):
-                path = inp.get("file_path", "")
-                if path:
-                    files_changed.add(Path(path).name)
-
-    if len(files_changed) >= 3:
-        return ", ".join(sorted(files_changed)[:5])
-    return None
 
 
 def _summarize(text: str, max_len: int) -> str:

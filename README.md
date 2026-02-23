@@ -1,144 +1,113 @@
 # decision-trail
 
-**Show your thinking, not just your code.**
-
-A CLI tool that captures human decisions during AI-assisted development. GitHub shows what you built. decision-trail shows *why* — and where the human overrode the AI.
+**Coding is solved. Thinking isn't. Capture the human layer.**
 
 ---
 
+## The Shift
+
+AI writes the code now. [Boris Cherny](https://x.com/lennysan/status/2024896611818897438), creator of Claude Code, hasn't written a line by hand since November. Claude Code accounts for 4% of public GitHub commits. Anthropic has seen a 200% increase in engineer productivity.
+
+So what's left?
+
+> *"The best software engineers won't be the fastest coders, but those who know when to distrust AI."*
+> — [Addy Osmani](https://addyosmani.com/blog/next-two-years/), Google Chrome
+
+The answer is converging from every direction:
+
+- **Taste** — knowing what to build, what to delete, and [what not to ship](https://addyosmani.com/blog/next-two-years/)
+- **Judgment** — knowing when the AI is wrong and why
+- **Direction** — framing the problem before any system takes action
+
+These skills are now the bottleneck. And they're invisible.
+
 ## The Problem
 
-In AI-assisted development ("vibe coding"), the code is increasingly AI-generated. Your commit history shows *what* changed, but not:
+Your GitHub shows what got committed. It doesn't show:
 
-- **What the AI suggested** that you rejected
-- **Why you chose** one approach over another
-- **Where your judgment** overrode the AI's recommendation
-- **How confident** you were in each call
+- What the AI suggested that you rejected
+- Where your judgment overrode the default
+- Why you chose one approach when both were viable
+- What you killed before it wasted a week
 
-ADR (Architecture Decision Record) tools exist, but they're manual, post-hoc, and don't capture the human/AI dynamic.
+There's no artefact for thinking. Hiring managers [test for judgment now](https://gritdaily.com/software-dev-hiring-shifting-from-syntax-to-judgment/) (54x increase in aptitude-style assessments since 2024), but they're doing it in 45-minute interviews because nothing else exists.
 
-## What decision-trail Does
+Meanwhile, [tacit knowledge is disappearing](https://aijourn.com/are-we-automating-professional-services-into-a-knowledge-crisis/). Juniors used to learn by watching seniors think. Remote work + AI broke that pipeline. Employment for 22-25 year olds in AI-exposed roles [fell 6%](https://stackoverflow.blog/2025/12/26/ai-vs-gen-z/) between 2022 and 2025. The stepping-stone tasks that built judgment are being automated away.
 
-| Standard ADR | decision-trail |
-|-------------|----------------|
-| Documents decisions after the fact | Captures decisions as you work |
-| Who decided = always the team | Who decided = human, AI, or human overriding AI |
-| No tooling integration | Claude Code `/decide` skill built in |
-| Manual creation | Auto-extraction from session logs |
+## How It Works
 
-## Quick Start
+**One command. Zero friction.**
+
+1. Start any Claude Code session
+2. Type `/marmite`
+3. Work normally
+4. Say "wrap" when you're done
+
+That's it. Claude silently tracks the moments where you redirect, reframe, make a judgment call, or kill a direction. On "wrap", it compiles a digest and commits it to your repo.
+
+No manual logging. No forms. No interruptions. You build, it watches.
+
+## What a Digest Looks Like
+
+```markdown
+# 2026-02-23 — decision-trail product direction
+
+- Killed Chez Claude. Not differentiated.
+- "article ideas are superweak" → past stories don't land, AI trends do
+- "be a second brain not an echo" → stop mirroring my recent work back at me
+- "I don't want a vanity metric" → raw capture, no scoring
+- Chose decision-trail over bets. Clarity > cleverness.
+- /marmite over manual CLI. One word in, one word out.
+```
+
+Flat list. One line per moment. Skimmable in 10 seconds. No categories, no scores, no self-assessment.
+
+## Who This Is For
+
+- **Engineers** who want proof they can think, not just type. Your GitHub contributions graph doesn't distinguish between you and your AI.
+- **PMs and operators** who build with AI tools and need to show the direction was theirs.
+- **Hiring managers** looking for a signal beyond code tests. [Competence is now defined by how well you think, not what you type.](https://gritdaily.com/software-dev-hiring-shifting-from-syntax-to-judgment/)
+- **Teams** where tacit knowledge is being lost. The digest is a [knowledge transfer mechanism](https://aijourn.com/are-we-automating-professional-services-into-a-knowledge-crisis/) — juniors can read how seniors think.
+
+## Setup
+
+Copy the `/marmite` skill to your global Claude commands:
+
+```bash
+mkdir -p ~/.claude/commands
+curl -o ~/.claude/commands/marmite.md https://raw.githubusercontent.com/ElliotJLT/decision-trail/main/.claude/commands/marmite.md
+```
+
+Now `/marmite` works in every project. No init, no config, no dependencies.
+
+### CLI (optional)
+
+If you want to parse old session logs from the command line:
 
 ```bash
 pip install decision-trail
-```
 
-### Initialize in your project
+# Generate a digest from a past session
+decision-trail digest ~/.claude/projects/.../session.jsonl --commit
 
-```bash
-cd your-project
-decision-trail init
-```
-
-This creates a `decisions/` directory and installs the Claude Code `/decide` skill.
-
-### Record a decision
-
-**Option A: CLI**
-```bash
-decision-trail new "Use PostgreSQL over SQLite"
-```
-
-Interactive prompts walk you through context, AI suggestion, your take, alternatives, and consequences.
-
-**Option B: Claude Code skill**
-
-In a Claude Code session, type `/decide`. Claude will conversationally capture the decision and write it to `decisions/`.
-
-### View your decision trail
-
-```bash
-decision-trail view
-```
-
-Renders a colorful timeline of all decisions in your terminal.
-
-### Extract decisions from a session
-
-```bash
+# Inspect what the extractor picks up
 decision-trail extract ~/.claude/projects/.../session.jsonl
 ```
 
-Parses a Claude Code session log, finds moments where you redirected the AI or made explicit choices, and suggests decision records to create.
+## The Thesis
 
-## Decision Record Format
+When everyone builds with AI, the only remaining signal is the human direction layer — taste, judgment, and the willingness to override, reframe, or kill. decision-trail makes that layer visible.
 
-```markdown
-# DT-001: Use PostgreSQL over SQLite
+This isn't about proving you're better than the AI. It's about proving you made the AI better.
 
-**Date:** 2026-02-22
-**Status:** accepted
-**Tags:** #database #architecture
-**Model:** claude-opus-4-6
-**Confidence:** high
+## Reading
 
-## Context
-Need a database for the user service. Expected 10k+ concurrent users.
-
-## Decision
-PostgreSQL with connection pooling via pgbouncer.
-
-## AI Suggestion
-Claude suggested SQLite initially — "simpler, no separate server process,
-good enough for most use cases."
-
-## Human Take
-Overrode the AI. SQLite can't handle our concurrency requirements.
-The AI defaulted to the simplest option without considering our scale.
-This is a case where the human's domain knowledge (knowing our traffic
-projections) led to a better decision.
-
-## Alternatives Considered
-| Option | Pros | Cons | Source |
-|--------|------|------|--------|
-| PostgreSQL | Handles concurrency, mature, great tooling | Operational overhead | Human proposed |
-| SQLite | Simple, zero config, embedded | Single-writer, no concurrent writes | AI suggested |
-| MySQL | Widely used, good performance | Less feature-rich than Postgres | Human proposed |
-
-## Consequences
-Need to set up PostgreSQL in Docker for local dev.
-Add pgbouncer for connection pooling in production.
-```
-
-### Fields unique to decision-trail (vs standard ADRs)
-
-- **`AI Suggestion`** — What the AI recommended
-- **`Human Take`** — Why the human agreed, disagreed, or modified
-- **`Model`** — Which AI model was involved
-- **`Confidence`** — How sure the human was (low/medium/high)
-
-## Why This Matters
-
-Your code contributions are visible on GitHub. But the *thinking* behind them isn't. In a world where AI writes most of the code, the human value is in:
-
-1. **Knowing what to build** — product sense, user empathy
-2. **Knowing when the AI is wrong** — domain expertise, judgment
-3. **Making trade-offs** — speed vs quality, simple vs scalable
-4. **Owning the outcome** — the human decided, not the AI
-
-decision-trail makes this visible. It's your proof of work for the thinking, not just the typing.
-
-## Commands
-
-| Command | Description |
-|---------|-------------|
-| `decision-trail init` | Initialize in a project (creates `decisions/`, installs skill) |
-| `decision-trail new "title"` | Create a new decision record interactively |
-| `decision-trail view` | Render all decisions as a terminal timeline |
-| `decision-trail extract <session.jsonl>` | Parse a Claude Code session for decision candidates |
-
-## Examples
-
-See the [`examples/`](examples/) directory for real decision records — the decisions made while building decision-trail itself (dogfooding).
+- [Taste Is the New Bottleneck](https://www.designative.info/2026/02/01/taste-is-the-new-bottleneck-design-strategy-and-judgment-in-the-age-of-agents-and-vibe-coding/) — Why judgment can no longer remain tacit
+- [Addy Osmani: The Next Two Years of Software Engineering](https://addyosmani.com/blog/next-two-years/) — What makes engineers valuable when AI codes
+- [Hiring Is Shifting From Syntax to Judgment](https://gritdaily.com/software-dev-hiring-shifting-from-syntax-to-judgment/) — 54x increase in aptitude assessments
+- [Are We Automating Into a Knowledge Crisis?](https://aijourn.com/are-we-automating-professional-services-into-a-knowledge-crisis/) — The tacit knowledge gap
+- [Boris Cherny: What Happens After Coding Is Solved](https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens) — Head of Claude Code on the builder role
+- [AI vs Gen Z: The Junior Developer Crisis](https://stackoverflow.blog/2025/12/26/ai-vs-gen-z/) — How stepping-stone tasks are disappearing
 
 ## License
 
