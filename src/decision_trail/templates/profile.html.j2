@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Decision Profile</title>
-  <meta name="description" content="How I think when building with AI. {{ profile.total_sessions }} sessions tracked.">
+  <title>Collaboration Log</title>
+  <meta name="description" content="Machine-captured collaboration patterns from real AI sessions. {{ profile.total_sessions }} sessions tracked.">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Decision Profile">
-  <meta property="og:description" content="Coding is solved. Thinking isn't. {{ profile.total_sessions }} sessions of human-AI collaboration, machine-captured.">
+  <meta property="og:title" content="Collaboration Log">
+  <meta property="og:description" content="AI judgment has no feedback loop. {{ profile.total_sessions }} sessions of human-AI collaboration, machine-captured.">
   <meta property="og:type" content="profile">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Decision Profile">
-  <meta name="twitter:description" content="Coding is solved. Thinking isn't. {{ profile.total_sessions }} sessions of human-AI collaboration, machine-captured.">
+  <meta name="twitter:title" content="Collaboration Log">
+  <meta name="twitter:description" content="AI judgment has no feedback loop. {{ profile.total_sessions }} sessions of human-AI collaboration, machine-captured.">
 
   <style>
 {{ css }}
@@ -24,8 +24,8 @@
   <div class="container">
 
     <header class="hero">
-      <h1>Decision Profile</h1>
-      <blockquote>Coding is solved. Thinking isn't. This is how I think.</blockquote>
+      <h1>Collaboration Log</h1>
+      <blockquote>AI fluency is measurable. AI judgment isn't. This log captures the difference.</blockquote>
       <p class="stats">
         <strong>{{ profile.total_sessions }} session{{ "s" if profile.total_sessions != 1 }}</strong>
         tracked since {{ profile.active_since }}
@@ -38,7 +38,7 @@
         {% if profile.how_i_work %}
         <p>{{ profile.how_i_work }}</p>
         {% else %}
-        <p class="placeholder">Run /trail to generate a synthesis — this section populates from recurring patterns across sessions.</p>
+        <p class="placeholder">Populates automatically after synthesis runs across enough sessions.</p>
         {% endif %}
       </div>
     </section>
@@ -52,7 +52,7 @@
         {% endfor %}
       </ul>
       {% else %}
-      <p class="placeholder">No digests yet. Run /marmite in a Claude Code session to start capturing.</p>
+      <p class="placeholder">No sessions captured yet. Start a session to begin logging.</p>
       {% endif %}
     </section>
 
@@ -84,7 +84,7 @@
         {% if profile.beyond_fluency_evidence %}
         <p>{{ profile.beyond_fluency_evidence }}</p>
         {% else %}
-        <p class="placeholder">Run /trail to surface evidence of trust calibration, artifact paradox resistance, meta-cognition, and strategic killing.</p>
+        <p class="placeholder">Surfaces after synthesis — trust calibration, artifact paradox resistance, meta-cognition, strategic killing.</p>
         {% endif %}
       </div>
     </section>

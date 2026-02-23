@@ -18,7 +18,7 @@ DECISIONS_DIR = "decisions"
 @click.group()
 @click.version_option(version=__version__, prog_name="decision-trail")
 def cli():
-    """Coding is solved. Thinking isn't. Capture the human layer.
+    """AI fluency is measurable. AI judgment isn't. Capture the difference.
 
     The primary way to use decision-trail is /marmite in Claude Code.
     This CLI exists for parsing session logs after the fact.

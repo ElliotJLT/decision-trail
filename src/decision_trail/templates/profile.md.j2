@@ -1,6 +1,6 @@
-# Decision Profile
+# Collaboration Log
 
-> Coding is solved. Thinking isn't. This is how I think.
+> AI fluency is measurable. AI judgment isn't. This log captures the difference.
 
 **{{ profile.total_sessions }} session{{ "s" if profile.total_sessions != 1 }}** tracked since {{ profile.active_since }}
 
@@ -9,7 +9,7 @@
 {% if profile.how_i_work %}
 {{ profile.how_i_work }}
 {% else %}
-*Run `/trail` to generate a synthesis — this section populates from recurring patterns across sessions.*
+*Populates automatically after synthesis runs across enough sessions.*
 {% endif %}
 
 ## Highlighted Moments
@@ -18,7 +18,7 @@
 - {{ moment }}
 {% endfor %}
 {% if not profile.highlighted_moments %}
-*No digests yet. Run `/marmite` in a Claude Code session to start capturing.*
+*No sessions captured yet. Start a session to begin logging.*
 {% endif %}
 
 ## Evolution
@@ -34,7 +34,7 @@
 {% if profile.beyond_fluency_evidence %}
 {{ profile.beyond_fluency_evidence }}
 {% else %}
-*Run `/trail` to surface evidence of trust calibration, artifact paradox resistance, meta-cognition, and strategic killing.*
+*Surfaces after synthesis — trust calibration, artifact paradox resistance, meta-cognition, strategic killing.*
 {% endif %}
 
 ---
