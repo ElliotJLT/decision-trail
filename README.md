@@ -1,5 +1,7 @@
 # decision-trail
 
+[![Decision Profile](https://img.shields.io/badge/profile-live-blue)](https://elliotjlt.github.io/decision-trail/)
+
 **AI fluency is a solved problem. AI judgment isn't.**
 
 ---
@@ -115,6 +117,21 @@ curl -o ~/.claude/commands/trail.md \
 ```
 
 `/marmite` (session tracking) and `/trail` (synthesis) now work in every project. No init, no config, no dependencies.
+
+### CLI (optional)
+
+```bash
+pip install decision-trail
+
+# Generate your shareable profile
+decision-trail profile --format both
+
+# Preview locally
+decision-trail serve
+
+# Parse old session logs
+decision-trail digest ~/.claude/projects/.../session.jsonl --commit
+```
 
 ## The Thesis
 

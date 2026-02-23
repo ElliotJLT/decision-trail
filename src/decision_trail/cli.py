@@ -100,5 +100,77 @@ def extract(session_path: Path, path: str):
         console.print()
 
 
+@cli.command()
+@click.option("--path", default=".", help="Project root path")
+@click.option(
+    "--format", "fmt",
+    type=click.Choice(["md", "html", "both"]),
+    default="md",
+    help="Output format",
+)
+def profile(path: str, fmt: str):
+    """Generate a shareable decision profile.
+
+    Reads all digests and synthesis files, produces a profile page.
+    Markdown goes to decisions/profile.md, HTML to docs/profile/index.html.
+    """
+    from .profile import build_profile
+    from .renderer import write_profile
+
+    root = Path(path).resolve()
+    data = build_profile(root)
+
+    if data.total_sessions == 0:
+        console.print("[yellow]No digests found. Run /marmite in a session first.[/yellow]")
+        return
+
+    written = write_profile(data, root, fmt)
+
+    for p in written:
+        console.print(f"[bold green]Written:[/bold green] {p.relative_to(root)}")
+
+    console.print(
+        f"\n[dim]{data.total_sessions} session(s) since {data.active_since}. "
+        f"{len(data.highlighted_moments)} highlighted moment(s).[/dim]"
+    )
+
+
+@cli.command()
+@click.option("--path", default=".", help="Project root path")
+@click.option("--port", default=8000, help="Port for local preview")
+def serve(path: str, port: int):
+    """Local preview of your HTML profile.
+
+    Generates the HTML profile and serves it at http://localhost:PORT.
+    """
+    import http.server
+    import functools
+
+    from .profile import build_profile
+    from .renderer import write_profile
+
+    root = Path(path).resolve()
+    data = build_profile(root)
+
+    if data.total_sessions == 0:
+        console.print("[yellow]No digests found. Run /marmite in a session first.[/yellow]")
+        return
+
+    write_profile(data, root, "html")
+    serve_dir = root / "docs" / "profile"
+
+    console.print(f"[bold green]Serving profile at[/bold green] http://localhost:{port}")
+    console.print("[dim]Press Ctrl+C to stop.[/dim]\n")
+
+    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(serve_dir))
+    server = http.server.HTTPServer(("", port), handler)
+
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        console.print("\n[dim]Stopped.[/dim]")
+        server.server_close()
+
+
 if __name__ == "__main__":
     cli()

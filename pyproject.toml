@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "decision-trail"
-version = "0.2.0"
+version = "0.3.0"
 description = "Show your thinking, not just your code. Capture human decisions during AI-assisted development."
 readme = "README.md"
 license = "MIT"
@@ -24,6 +24,7 @@ classifiers = [
 ]
 dependencies = [
     "click>=8.0",
+    "jinja2>=3.1",
     "rich>=13.0",
 ]
 

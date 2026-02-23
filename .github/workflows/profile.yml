@@ -1,0 +1,56 @@
+name: Update Decision Profile
+
+on:
+  push:
+    paths:
+      - 'decisions/digests/**'
+      - 'decisions/synthesis/**'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-profile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install decision-trail
+        run: pip install .
+
+      - name: Generate profile
+        run: decision-trail profile --format both
+
+      - name: Commit updated profile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add decisions/profile.md docs/profile/
+          git diff --cached --quiet || git commit -m "profile: auto-update from new digest"
+          git push
+
+  deploy-pages:
+    needs: build-profile
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/configure-pages@v4
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/profile
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
