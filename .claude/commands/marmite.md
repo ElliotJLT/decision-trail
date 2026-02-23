@@ -13,6 +13,7 @@ Watch for:
 - When they set quality bars or kill directions
 - When they resist scope creep or refuse to react to noisy signals
 - When they correct your process (not just your output)
+- When they coordinate across multiple Claude sessions — handoffs, context-passing, using tools (issues, PRs, files) as communication layers between sessions
 
 ## When the user says "wrap", "done", "ship it", or invokes /marmite again:
 
