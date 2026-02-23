@@ -4,38 +4,30 @@
 
 **{{ profile.total_sessions }} session{{ "s" if profile.total_sessions != 1 }}** tracked since {{ profile.active_since }}
 
+{% if profile.how_i_work %}
 ## How I Work With AI
 
-{% if profile.how_i_work %}
 {{ profile.how_i_work }}
-{% else %}
-*Populates automatically after synthesis runs across enough sessions.*
-{% endif %}
 
+{% endif %}
 ## Highlighted Moments
 
 {% for moment in profile.highlighted_moments %}
 - {{ moment }}
 {% endfor %}
-{% if not profile.highlighted_moments %}
-*No sessions captured yet. Start a session to begin logging.*
-{% endif %}
-
-## Evolution
 
 {% if profile.evolution_narrative %}
-{{ profile.evolution_narrative }}
-{% else %}
-*Needs more sessions. Evolution tracks how collaboration style changes over time.*
-{% endif %}
+## Evolution
 
+{{ profile.evolution_narrative }}
+
+{% endif %}
+{% if profile.beyond_fluency_signals %}
 ## Beyond Fluency
 
 {% for signal in profile.beyond_fluency_signals %}
 - {{ signal }}
 {% endfor %}
-{% if not profile.beyond_fluency_signals %}
-*Surfaces after synthesis — trust calibration, artifact paradox resistance, meta-cognition, strategic killing.*
 {% endif %}
 
 ---
