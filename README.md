@@ -1,60 +1,42 @@
 # decision-trail
 
-**Coding is solved. Thinking isn't. Capture the human layer.**
+**AI fluency is a solved problem. AI judgment isn't.**
 
 ---
 
-## The Shift
+## The Artifact Paradox
 
-AI writes the code now. [Boris Cherny](https://x.com/lennysan/status/2024896611818897438), creator of Claude Code, hasn't written a line by hand since November. Claude Code accounts for 4% of public GitHub commits. Anthropic has seen a 200% increase in engineer productivity.
+Anthropic studied [nearly 10,000 conversations](https://www.anthropic.com/research/AI-fluency-index) to measure how effectively people work with AI. The headline finding: iteration makes you better. Obviously.
 
-Matt Shumer [describes the inflection](https://shumer.dev/something-big-is-happening): "I describe what I want built...and it just...appears." Task completion capacity is doubling every 4-7 months. Models are helping build the next generation of models. This is accelerating.
+The buried finding is the one that matters: when AI produces polished, professional-looking output, users become *less* critical. They give better upfront direction but stop questioning, stop fact-checking, stop pushing back. Anthropic calls it the **artifact paradox**. The better the AI gets, the more humans coast.
 
-So what's left?
+There's no feedback loop. Tests catch bad code. Editors catch bad writing. Nothing catches bad judgment in AI-assisted work. You can't improve what you can't see.
 
-> *"The best software engineers won't be the fastest coders, but those who know when to distrust AI."*
-> — [Addy Osmani](https://addyosmani.com/blog/next-two-years/), Google Chrome
+## Fluency Is the Floor
 
-The answer is converging from every direction:
+Anthropic's [4D framework](https://www.anthropic.com/ai-fluency/overview) — Delegation, Description, Discernment, Diligence — defines baseline AI competency. It's real and it's useful. It'll also be universal within 18 months. Courses will teach it. Everyone will pass.
 
-- **Taste** — knowing what to build, what to delete, and [what not to ship](https://addyosmani.com/blog/next-two-years/)
-- **Judgment** — knowing when the AI is wrong and why
-- **Direction** — framing the problem before any system takes action
+Victoria Ferrier [argues](https://victoriaferrier.substack.com/p/ai-is-the-wrong-unit-of-analysis) this is solving the wrong problem. AI readiness isn't a technology problem — it's a human capacity problem. Organizations training people to prompt better are treating an adaptive challenge as a technical one. The real question is whether people have the judgment to navigate complexity when the AI is confidently wrong.
 
-These skills are now the bottleneck. And they're invisible.
+Matt Shumer [puts a clock on it](https://shumer.dev/something-big-is-happening): task completion capacity is doubling every 4-7 months. Models are helping build the next generation of models. When everyone builds with AI, the only differentiator is the human direction layer — taste, judgment, and the willingness to override.
 
-## The Problem
+**The window where judgment differentiates you is narrow and open now.**
 
-Your GitHub shows what got committed. It doesn't show:
+## What Sits Above Fluency
 
-- What the AI suggested that you rejected
-- Where your judgment overrode the default
-- Why you chose one approach when both were viable
-- What you killed before it wasted a week
+These aren't skills you learn in a course. They're dispositions you develop through practice:
 
-There's no artefact for thinking. Hiring managers [test for judgment now](https://gritdaily.com/software-dev-hiring-shifting-from-syntax-to-judgment/) (54x increase in aptitude-style assessments since 2024), but they're doing it in 45-minute interviews because nothing else exists.
+- **Trust calibration** — knowing when to let the AI run vs when to check its work. Not blanket trust. Calibrated, task-by-task.
+- **Resistance to the artifact paradox** — challenging output that looks polished. The more professional it seems, the harder you look.
+- **Meta-cognition** — correcting the AI's process, not just its output.
+- **Strategic killing** — deciding what not to build, even when the AI builds it beautifully.
+- **Pattern recognition** — seeing your own habits across sessions, not just within them.
 
-Meanwhile, [tacit knowledge is disappearing](https://aijourn.com/are-we-automating-professional-services-into-a-knowledge-crisis/). Juniors used to learn by watching seniors think. Remote work + AI broke that pipeline. Employment for 22-25 year olds in AI-exposed roles [fell 6%](https://stackoverflow.blog/2025/12/26/ai-vs-gen-z/) between 2022 and 2025. The stepping-stone tasks that built judgment are being automated away.
+The problem: none of this leaves a trace. Your GitHub shows what got committed. It doesn't show what you rejected, redirected, or killed.
 
-## Beyond Fluency
+## decision-trail
 
-Anthropic's [AI Fluency Index](https://www.anthropic.com/research/AI-fluency-index) measures baseline human-AI competency across four dimensions: Delegation, Description, Discernment, and Diligence. It's a useful floor. But their own research reveals the ceiling problem: when AI produces polished output, people become *less* critical — not more. They call it the artifact paradox. Users provide better upfront direction but ask fewer questions and do less fact-checking on complex tasks. Fluency without vigilance.
-
-Victoria Ferrier [goes further](https://victoriaferrier.substack.com/p/ai-is-the-wrong-unit-of-analysis): AI readiness isn't a technology problem, it's a human capacity problem. Organizations asking "how do we become AI-ready?" are treating an adaptive challenge as a technical one. The real question is whether people have the judgment infrastructure to navigate complexity — what she calls Learning Power: mindful agency, sense-making, curiosity, and the ability to hold uncertainty without flinching.
-
-**Fluency is knowing how to use AI. What matters now is knowing how to think alongside it.**
-
-The decision trail captures what sits above fluency:
-
-- **Trust calibration** — when you let the AI run vs when you check its work
-- **Resistance to the artifact paradox** — challenging polished output, not accepting it
-- **Meta-cognition** — correcting the AI's process, not just its output
-- **Strategic killing** — knowing what not to build, even when the AI builds it beautifully
-- **Pattern recognition** — seeing across sessions, not just within them
-
-These aren't skills you learn in a course. They're dispositions you develop through practice. The decision trail makes them visible.
-
-## How It Works
+A practice for developing AI judgment. Like a training log for a runner — the primary value is to you.
 
 **One command. Zero friction.**
 
@@ -63,37 +45,33 @@ These aren't skills you learn in a course. They're dispositions you develop thro
 3. Work normally
 4. Say "wrap" when you're done
 
-That's it. Claude silently tracks the moments where you redirect, reframe, make a judgment call, or kill a direction. On "wrap", it compiles a digest and commits it to your repo.
+Claude silently tracks the moments where you redirect, reframe, set a quality bar, or kill a direction. On "wrap", it compiles a digest. No manual logging. No forms. No interruptions.
 
-No manual logging. No forms. No interruptions. You build, it watches.
-
-## What a Digest Looks Like
+### What a digest looks like
 
 ```markdown
-# 2026-02-23 — GCSE + IB paper ingestion
+# 2026-02-23 — eval scoring diagnosis
 
-Long session — download scripts, parsers, bulk extraction across three new
-exam boards. Heavy use of background tasks running in parallel.
+~4h research session. Suspected a generation problem, investigated before fixing.
 
-- Set a clear quality bar early: "happy with the past 2,3 years of papers"
-  — stopped Claude from chasing diminishing returns on older data.
-- Delegated eng judgement on PR strategy but pressure-tested the answer by
-  checking Claude understood the dependency chain before approving.
-- Caught Claude fabricating context — challenged a summary that didn't match
-  what the open PRs had done. Made Claude reconcile before moving on.
-- API credits ran out three times. No frustration, just reset and re-run.
-  Treated infrastructure hiccups as infrastructure, not blockers.
-- Caught the session digest itself leaking internal architecture. Redirected
-  the format and updated the skill — meta-decision about what's safe to share.
-- Pattern: trusts Claude to run autonomously on mechanical work, but checks
-  in on anything involving judgement or narrative.
+- Instinct to diagnose before treating — scores looked bad but the question
+  was whether the answers were wrong or the measurement was wrong. Chose to
+  investigate the scorer first.
+- Conservative fix philosophy: built targeted matchers with guards that would
+  rather miss a match than fabricate one. Precision over recall.
+- Refused to chase a low score when the test conditions were unreliable.
+  Flagged it as bad data instead of reacting to the number.
+- Held the fix as research rather than shipping immediately. Won't merge
+  until re-validated under correct conditions.
+- Pattern: diagnose root cause before touching anything, don't ship under
+  uncertainty, resist the urge to fix what isn't broken.
 ```
 
-Narrative, not forensic. Someone should skim it in 15 seconds and understand how this person works with AI — not what was built.
+Skimmable in 15 seconds. No scores. No self-assessment. Just a record of how someone actually thinks when building with AI.
 
-## Surfacing Patterns
+### Surfacing patterns over time
 
-Individual digests capture sessions. Over time, the real signal is in the patterns across them.
+Individual digests capture sessions. The real signal is in the trajectory across them.
 
 Run `/trail` periodically to generate a synthesis:
 
@@ -103,10 +81,8 @@ Run `/trail` periodically to generate a synthesis:
 ## Recurring patterns
 - Consistently diagnoses root cause before fixing. Two sessions where the
   obvious fix was wrong and investigation saved significant rework.
-- Delegates mechanical execution freely but always verifies narrative and
-  judgement calls. Trust is calibrated by task type, not blanket.
-- Kills directions quickly when evidence doesn't support them. No sunk
-  cost attachment.
+- Delegates mechanical execution freely but always verifies judgement calls.
+  Trust is calibrated by task type, not blanket.
 
 ## Evolution
 - First session: accepted AI-generated digests at face value. By third
@@ -115,22 +91,20 @@ Run `/trail` periodically to generate a synthesis:
 
 ## Beyond fluency
 - Artifact paradox resistance: actively challenges polished output in 2/3
-  sessions. This is the exact behavior Anthropic's research shows most
-  users stop doing.
+  sessions. This is the behaviour Anthropic's research shows most users
+  stop doing.
 ```
 
-The synthesis surfaces what you can't see from any single session — whether your collaboration instincts are sharpening, plateauing, or eroding.
+The synthesis surfaces whether your collaboration instincts are sharpening, plateauing, or eroding. You can't course-correct a disposition you can't see.
 
 ## Who This Is For
 
-- **Engineers** who want proof they can think, not just type. Your GitHub contributions graph doesn't distinguish between you and your AI.
-- **PMs and operators** who build with AI tools and need to show the direction was theirs.
-- **Hiring managers** looking for a signal beyond code tests. [Competence is now defined by how well you think, not what you type.](https://gritdaily.com/software-dev-hiring-shifting-from-syntax-to-judgment/)
-- **Teams** where tacit knowledge is being lost. The digest is a [knowledge transfer mechanism](https://aijourn.com/are-we-automating-professional-services-into-a-knowledge-crisis/) — juniors can read how seniors think.
+- **Engineers** already building with AI who want a feedback loop for judgment, not just code.
+- **Tech leads** who need to develop their team's AI collaboration instincts, not just their prompt skills.
+- **Hiring managers** looking for a signal beyond code tests — [aptitude assessments are up 54x since 2024](https://gritdaily.com/software-dev-hiring-shifting-from-syntax-to-judgment/) because nothing else exists.
+- **Teams** where [tacit knowledge is disappearing](https://aijourn.com/are-we-automating-professional-services-into-a-knowledge-crisis/) — digests are a knowledge transfer mechanism. Juniors can read how seniors think.
 
 ## Setup
-
-Copy the skills to your global Claude commands:
 
 ```bash
 mkdir -p ~/.claude/commands
@@ -140,39 +114,23 @@ curl -o ~/.claude/commands/trail.md \
   https://raw.githubusercontent.com/ElliotJLT/decision-trail/main/.claude/commands/trail.md
 ```
 
-Now `/marmite` (session tracking) and `/trail` (synthesis) work in every project. No init, no config, no dependencies.
-
-### CLI (optional)
-
-If you want to parse old session logs from the command line:
-
-```bash
-pip install decision-trail
-
-# Generate a digest from a past session
-decision-trail digest ~/.claude/projects/.../session.jsonl --commit
-
-# Inspect what the extractor picks up
-decision-trail extract ~/.claude/projects/.../session.jsonl
-```
+`/marmite` (session tracking) and `/trail` (synthesis) now work in every project. No init, no config, no dependencies.
 
 ## The Thesis
 
-Fluency is table stakes. Everyone will be fluent. [Anthropic can measure it](https://www.anthropic.com/research/AI-fluency-index), courses can teach it, and within a year the floor will be high enough that it stops being a differentiator.
+Everyone will be fluent. [Anthropic can measure it](https://www.anthropic.com/research/AI-fluency-index), courses can teach it, and the floor is rising fast enough that it stops being a differentiator.
 
-What can't be taught — and can't be faked — is the human layer above fluency: the instinct to challenge, the discipline to kill, the judgment to know when the AI is confidently wrong. [Victoria Ferrier calls it Learning Power](https://victoriaferrier.substack.com/p/ai-is-the-wrong-unit-of-analysis). [Matt Shumer calls it the thing that makes you irreplaceable](https://shumer.dev/something-big-is-happening). Addy Osmani calls it taste.
+What can't be taught is the layer above fluency: the instinct to challenge, the discipline to kill, the judgment to know when the AI is confidently wrong. [Ferrier calls it Learning Power](https://victoriaferrier.substack.com/p/ai-is-the-wrong-unit-of-analysis). [Shumer calls it the thing that makes you irreplaceable](https://shumer.dev/something-big-is-happening). [Osmani calls it taste](https://addyosmani.com/blog/next-two-years/).
 
-decision-trail makes that layer visible. Not as a score. Not as a self-assessment. As a timestamped, public record of how you actually think when you're building with AI.
-
-This isn't about proving you're better than the AI. It's about proving you made the AI better.
+decision-trail doesn't measure that layer. It develops it — by making it visible to the person who needs to see it most: you.
 
 ## Reading
 
-- [Anthropic: The AI Fluency Index](https://www.anthropic.com/research/AI-fluency-index) — Measuring human-AI collaboration, and why polished output makes people less critical
+- [Anthropic: The AI Fluency Index](https://www.anthropic.com/research/AI-fluency-index) — Why polished output makes people less critical
 - [Victoria Ferrier: AI Is The Wrong Unit of Analysis](https://victoriaferrier.substack.com/p/ai-is-the-wrong-unit-of-analysis) — Human capacity, not AI capability, determines success
 - [Matt Shumer: Something Big Is Happening](https://shumer.dev/something-big-is-happening) — The inflection point and why differentiation matters now
 - [Taste Is the New Bottleneck](https://www.designative.info/2026/02/01/taste-is-the-new-bottleneck-design-strategy-and-judgment-in-the-age-of-agents-and-vibe-coding/) — Why judgment can no longer remain tacit
-- [Addy Osmani: The Next Two Years of Software Engineering](https://addyosmani.com/blog/next-two-years/) — What makes engineers valuable when AI codes
+- [Addy Osmani: The Next Two Years](https://addyosmani.com/blog/next-two-years/) — What makes engineers valuable when AI codes
 - [Hiring Is Shifting From Syntax to Judgment](https://gritdaily.com/software-dev-hiring-shifting-from-syntax-to-judgment/) — 54x increase in aptitude assessments
 - [Are We Automating Into a Knowledge Crisis?](https://aijourn.com/are-we-automating-professional-services-into-a-knowledge-crisis/) — The tacit knowledge gap
 - [Boris Cherny: What Happens After Coding Is Solved](https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens) — Head of Claude Code on the builder role
