@@ -5,3 +5,9 @@ dist/
 build/
 *.egg
 .venv/
+
+# Personal data — kept locally, not in public repo
+decisions/digests/
+decisions/profile.md
+decisions/synthesis/
+drafts/
