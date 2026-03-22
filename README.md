@@ -123,6 +123,9 @@ curl -o ~/.claude/commands/trail.md \
 ```bash
 pip install decision-trail
 
+# Cognitive engagement dashboard
+decision-trail metrics
+
 # Generate your shareable profile
 decision-trail profile --format both
 

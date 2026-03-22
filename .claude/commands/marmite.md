@@ -4,7 +4,7 @@ Silently note moments where the user redirects you, reframes a problem, makes a 
 
 ## What to track
 
-Focus on **how the user engages with Claude Code** — their instincts, patterns, and steering. This is a log of human-AI collaboration style, not a project changelog.
+Focus on **how the user engages with Claude Code** — their instincts, patterns, and steering. This is a training log, not a highlight reel.
 
 Watch for:
 - When they trust you to run autonomously vs when they check your work
@@ -15,14 +15,16 @@ Watch for:
 - When they correct your process (not just your output)
 - When they coordinate across multiple Claude sessions — handoffs, context-passing, using tools (issues, PRs, files) as communication layers between sessions
 
-Also watch for the absence:
+**Equally important — track when they DON'T do these things:**
 - When they accept output without challenge that warranted scrutiny
 - When scope drifts and they don't catch it
 - When you self-correct something they missed
 - When polished output gets waved through uncritically (artifact paradox in action)
 - When a session coasts — no redirects, no kills, no pushback
+- When they override you and you were actually right
+- When they go down a rabbit hole without a kill switch
 
-Track both. The moments they steer and the moments they don't are equally valuable data.
+Both sides matter. The moments they steer AND the moments they don't are equally valuable data.
 
 ## When the user says "wrap", "done", "ship it", or invokes /marmite again:
 
@@ -37,15 +39,25 @@ Format:
 
 [1-2 sentence summary of the session shape — long/short, research/shipping, etc.]
 
-- [tight narrative bullets focused on how the user steered the session.]
-- [capture their instincts: when they trusted, when they checked, when they pushed back.]
-- [end with a "Pattern:" line if a recurring behaviour emerged.]
-- [quote sparingly — only when exact words carry meaning a paraphrase would lose.]
-- [no architecture details, env vars, column names, file paths, or service names.]
-- [if nothing notable happened, just write "Nothing notable."]
+## Redirects
+[Moments the user steered, challenged, or killed something. Max 3. Only include if genuinely notable.]
+- [What happened → what the user did → was it the right call in hindsight?]
+
+## Unchallenged
+[Moments the user accepted output or direction without questioning it. Be honest — was that trust warranted or lazy?]
+- [What was accepted → should it have been challenged? → why/why not?]
+
+## Wrong calls
+[Moments the user's judgment was wrong — overrode you when you were right, went down a rabbit hole, missed something obvious. This section can be empty but should never be padded.]
+- [What happened → what would have been better?]
+
+## Pattern
+[One recurring behaviour observed in this session, cross-referenced against previous digests if they exist. Can be positive or negative. If nothing emerged, write "No new pattern."]
 ```
 
-Think collaboration diary, not project status update. Someone should skim it in 15 seconds and understand how this person works with AI — not what was built.
+The bar: after reading this, would Elliot learn something about his OWN collaboration habits he didn't already know? If it just says "Elliot made good calls" — rewrite it. That's a hype reel, not a training log.
+
+**Contradiction check before committing:** Compare the Redirects section against the Unchallenged section. If Redirects is full and Unchallenged is empty, you're probably flattering. A real session has both. If the session genuinely had no unchallenged moments, explain why.
 
 After writing, commit and push from the decision-trail repo:
 ```bash
@@ -59,16 +71,14 @@ cd /Users/elliot/decision-trail && git add decisions/digests/YYYY-MM-DD-session-
 - Routine debugging or error-fixing unless the *approach* was notable
 - Anything that's just "using the tool correctly" — only log thinking patterns
 
-The bar: would a senior engineer reading this learn something about how this person thinks? If not, cut it.
-
 ## Rules
 
 - This is about the human's patterns, not the codebase.
-- Narrative over bullet-quotes. Tell the story tight.
+- **Honest > flattering.** If Elliot coasted, say so. If he was wrong, say so. If nothing notable happened, write "Nothing notable."
 - One bullet per moment. If it needs two, you're over-explaining.
 - No internal details. Keep it safe for a public repo.
-- If nothing notable happened, write "Nothing notable." and commit that. Honest > padded.
-- Never editorialize. Never score. Never count.
+- Never pad a section to make it look balanced. Empty sections are fine.
+- The "Wrong calls" section is the most valuable part. Protect it from the instinct to soften.
 
 ## On activation
 

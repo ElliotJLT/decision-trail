@@ -137,6 +137,137 @@ def profile(path: str, fmt: str):
 
 @cli.command()
 @click.option("--path", default=".", help="Project root path")
+@click.option(
+    "--from-sessions",
+    "session_dir",
+    type=click.Path(exists=True, path_type=Path),
+    default=None,
+    help="Derive metrics from JSONL session logs in this directory instead of digests",
+)
+def metrics(path: str, session_dir: Path | None):
+    """Cognitive engagement dashboard.
+
+    Shows per-session metrics, trends, and coasting alerts derived from
+    your digest files. Use --from-sessions to derive metrics directly
+    from JSONL session logs instead.
+    """
+    from rich.table import Table
+    from rich.panel import Panel
+    from rich.text import Text
+
+    from .metrics import (
+        collect_from_digests,
+        collect_from_sessions,
+        build_summary,
+    )
+
+    root = Path(path).resolve()
+
+    if session_dir:
+        session_paths = sorted(session_dir.glob("*.jsonl"))
+        if not session_paths:
+            console.print("[yellow]No .jsonl files found in that directory.[/yellow]")
+            return
+        console.print(f"[dim]Parsing {len(session_paths)} session log(s)...[/dim]\n")
+        sessions = collect_from_sessions(session_paths)
+    else:
+        sessions = collect_from_digests(root)
+
+    if not sessions:
+        console.print("[yellow]No digests found. Run /marmite in a session first.[/yellow]")
+        return
+
+    summary = build_summary(sessions)
+
+    # --- Per-session table ---
+    table = Table(title="Session Metrics", show_lines=False, pad_edge=False)
+    table.add_column("Date", style="dim", no_wrap=True)
+    table.add_column("Topic", max_width=30)
+    table.add_column("Redirects", justify="right", style="cyan")
+    table.add_column("Unchallenged", justify="right", style="yellow")
+    table.add_column("Wrong", justify="right", style="red")
+    table.add_column("Override %", justify="right")
+    table.add_column("Engagement", justify="right", style="bold")
+
+    for s in sessions:
+        # Color-code override rate
+        rate_str = f"{s.override_rate:.0%}"
+        if s.override_rate >= 0.4:
+            rate_style = "green"
+        elif s.override_rate >= 0.2:
+            rate_style = "yellow"
+        else:
+            rate_style = "red"
+
+        # Color-code engagement score
+        eng_str = f"{s.engagement_score:.0f}"
+        if s.engagement_score >= 60:
+            eng_style = "bold green"
+        elif s.engagement_score >= 35:
+            eng_style = "bold yellow"
+        else:
+            eng_style = "bold red"
+
+        topic_display = s.topic[:30] if s.topic else "—"
+
+        table.add_row(
+            s.date or "—",
+            topic_display,
+            str(s.redirect_count),
+            str(s.unchallenged_count),
+            str(s.wrong_call_count),
+            f"[{rate_style}]{rate_str}[/{rate_style}]",
+            f"[{eng_style}]{eng_str}[/{eng_style}]",
+        )
+
+    console.print(table)
+    console.print()
+
+    # --- Trend sparklines ---
+    trend_arrow = {"up": "[green]trending up[/green]", "down": "[red]trending down[/red]", "flat": "[dim]flat[/dim]"}
+
+    or_trend = summary.override_rate_trend
+    eng_trend = summary.engagement_trend
+
+    console.print("[bold]Trends[/bold]")
+    console.print(
+        f"  Override rate:    {or_trend.sparkline}  "
+        f"{trend_arrow.get(or_trend.direction, 'flat')}  "
+        f"(MA5: {or_trend.moving_avg_5:.0%}  MA10: {or_trend.moving_avg_10:.0%})"
+    )
+    console.print(
+        f"  Engagement score: {eng_trend.sparkline}  "
+        f"{trend_arrow.get(eng_trend.direction, 'flat')}  "
+        f"(MA5: {eng_trend.moving_avg_5:.0f}  MA10: {eng_trend.moving_avg_10:.0f})"
+    )
+    console.print()
+
+    # --- Aggregates ---
+    console.print("[bold]Aggregate[/bold]")
+    console.print(f"  Sessions: {summary.total_sessions}")
+    console.print(f"  Avg engagement: {summary.avg_engagement_score:.0f}/100")
+    console.print(f"  Avg override rate: {summary.avg_override_rate:.0%}")
+    console.print(
+        f"  Totals: {summary.total_redirects} redirects, "
+        f"{summary.total_unchallenged} unchallenged, "
+        f"{summary.total_wrong_calls} wrong calls"
+    )
+    console.print()
+
+    # --- Coasting alerts ---
+    if summary.coasting_alerts:
+        for alert in summary.coasting_alerts:
+            style = "bold red" if alert.severity == "critical" else "bold yellow"
+            icon = "!!" if alert.severity == "critical" else "!"
+            console.print(Panel(
+                f"[{style}]{icon} {alert.message}[/{style}]",
+                title="[bold]Coasting Alert[/bold]",
+                border_style="red" if alert.severity == "critical" else "yellow",
+            ))
+
+
+@cli.command()
+@click.option("--path", default=".", help="Project root path")
 @click.option("--port", default=8000, help="Port for local preview")
 def serve(path: str, port: int):
     """Local preview of your HTML profile.
