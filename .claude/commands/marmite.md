@@ -14,6 +14,7 @@ Watch for:
 - When they resist scope creep or refuse to react to noisy signals
 - When they correct your process (not just your output)
 - When they coordinate across multiple Claude sessions — handoffs, context-passing, using tools (issues, PRs, files) as communication layers between sessions
+- When a correction from a previous session stuck (you remembered it without being told again) vs when it didn't (they had to re-correct you). This is memory persistence signal — Auto Dream consolidation working or failing.
 
 **Equally important — track when they DON'T do these things:**
 - When they accept output without challenge that warranted scrutiny
@@ -23,6 +24,7 @@ Watch for:
 - When a session coasts — no redirects, no kills, no pushback
 - When they override you and you were actually right
 - When they go down a rabbit hole without a kill switch
+- When they have to re-teach you something that should have persisted in memory — the correction didn't survive consolidation, or was never captured
 
 Both sides matter. The moments they steer AND the moments they don't are equally valuable data.
 
@@ -50,6 +52,9 @@ Format:
 ## Wrong calls
 [Moments the user's judgment was wrong — overrode you when you were right, went down a rabbit hole, missed something obvious. This section can be empty but should never be padded.]
 - [What happened → what would have been better?]
+
+## Memory
+[Did any correction or preference from a previous session persist without being re-taught? Did anything get forgotten that shouldn't have? This tracks whether Auto Dream consolidation is preserving the right signal. Write "No memory signal." if not applicable — e.g. first session or no prior corrections to test.]
 
 ## Pattern
 [One recurring behaviour observed in this session, cross-referenced against previous digests if they exist. Can be positive or negative. If nothing emerged, write "No new pattern."]

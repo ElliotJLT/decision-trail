@@ -23,6 +23,17 @@ This is a practice tool, not a portfolio. The framing is:
 - Ground every synthesis observation in evidence from digests. Don't infer what isn't there.
 - Watch for multi-session coordination patterns — how the user orchestrates parallel Claude sessions is signal.
 
+## Auto Dream integration
+
+Decision-trail and Auto Dream form a feedback loop:
+
+1. `/marmite` captures session digests including memory persistence signals (corrections that stuck vs. had to be re-taught)
+2. `/trail` synthesizes patterns and writes `memory-bridge.md` — the 3-7 most durable collaboration preferences, phrased as actionable instructions
+3. Auto Dream consolidates `memory-bridge.md` into working memory during its normal consolidation cycle
+4. Next session: Claude starts with those preferences already loaded → marmite tracks whether they held
+
+The memory bridge is the handoff point. It ages naturally — preferences that stop appearing in digests drop out at next synthesis. No manual pruning needed.
+
 ## Key references
 
 - [Anthropic AI Fluency Index](https://www.anthropic.com/research/AI-fluency-index) — 4D framework, artifact paradox, 13 unobservable behaviors
