@@ -37,6 +37,7 @@ This is the unique value of decision-trail. Surface evidence of:
 - **Meta-cognition** — are they correcting the AI's process, not just its output? Redirecting approach, not just fixing results?
 - **Strategic killing** — are they killing directions early? Or showing sunk-cost attachment?
 - **Interaction style communication** — are they explicitly shaping how the AI works with them? (setting quality bars, defining what's acceptable, reframing how output should look)
+- **Memory persistence** — are corrections sticking across sessions? Are digests showing the same corrections being re-taught, suggesting memory consolidation isn't capturing the right signal? Improvement here means the feedback loop (digest → synthesis → memory bridge → Auto Dream → next session) is working.
 
 ### Trajectory
 - What's changed since earlier sessions? More trust? Less? Different kinds?
@@ -72,10 +73,31 @@ This is the unique value of decision-trail. Surface evidence of:
   absent. "Nothing notable" if nothing is missing.]
 ```
 
+## Memory bridge
+
+After writing the synthesis, extract the 3-5 most durable collaboration preferences — patterns that have been consistent across multiple sessions and should persist in Claude's working memory. Write these to `decisions/synthesis/memory-bridge.md`, overwriting any previous version.
+
+Format:
+
+```markdown
+# Collaboration preferences (auto-generated from synthesis)
+# Last updated: YYYY-MM-DD from [N] sessions
+
+- [Preference 1 — concrete, actionable, grounded in repeated evidence]
+- [Preference 2]
+- [etc.]
+```
+
+Rules for the memory bridge:
+- Only include patterns with evidence across 3+ sessions. No one-offs.
+- Phrase as instructions Claude can act on, not observations about the user. "Check narrative framing before committing" not "User tends to challenge narrative framing."
+- Max 7 preferences. If you can't cut to 7, you're not being selective enough.
+- This file is the handoff to Auto Dream. It should consolidate these into working memory. If a preference stops appearing in digests, it should naturally age out in the next synthesis.
+
 ## After writing
 
 ```bash
-git add decisions/synthesis/YYYY-MM.md
+git add decisions/synthesis/YYYY-MM.md decisions/synthesis/memory-bridge.md
 git commit -m "synthesis: [month year]"
 git push
 ```
